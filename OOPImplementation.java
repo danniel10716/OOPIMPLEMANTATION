@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//Abstraction
+// Abstraction: Abstraction hides the complex reality while exposing only the necessary parts
 public interface LoanBook {
     boolean checkAvailability();
     void markAsBorrowed();
@@ -10,13 +10,13 @@ public interface LoanBook {
 }
 
 // Book class implementing LoanBook
-public class Book implements LoanBook{
+public class Book implements LoanBook {
     private String title;
     private String author;
     private String isbn;
-    private boolean availableCopies;
+    private int availableCopies; // Changed to int
 
-    public Book(String title, String author, String isbn, boolean availableCopies) {
+    public Book(String title, String author, String isbn, int availableCopies) { // Changed to int
         this.title = title;
         this.author = author;
         this.isbn = isbn;
@@ -35,7 +35,7 @@ public class Book implements LoanBook{
         return isbn;
     }
 
-    public boolean getAvailableCopies() {
+    public int getAvailableCopies() { // Changed to return int
         return availableCopies;
     }
 
@@ -57,7 +57,7 @@ public class Book implements LoanBook{
     }
 }
 
-//User class this is a Base Class
+// User class
 public abstract class User {
     private String name;
     private String email;
@@ -76,14 +76,14 @@ public abstract class User {
     }
 }
 
-//Member class Inherits from the User class{Inheritance:  is a mechanism that allows one class (subclass or derived class) to inherit attributes and methods from another class (superclass or base class)}
+// Member class
 public class Member extends User {
     public Member(String name, String email) {
         super(name, email);
     }
 }
 
-//Librarian class Inherits from the  Member class()
+// Librarian class
 public class Librarian extends Member {
     public Librarian(String name, String email) {
         super(name, email);
@@ -98,7 +98,7 @@ public class Librarian extends Member {
     }
 }
 
-//Loan class {Abstraction: the concept of hiding the complex reality while exposing only the necessary parts }
+// Loan class
 public class Loan {
     private String loanId;
     private Book book;
@@ -119,10 +119,10 @@ public class Loan {
     }
 }
 
-//Library class {Polymorphism:  allows methods to do different things based on the object that it is acting upon, even if they share the same name.}
+// Library class
 public class Library {
-    private List<Book> books = new ArrayList<>();
-    private List<Loan> loans = new ArrayList<>();
+    private List<Book> books = new ArrayList<>(); //private encapsulation
+    private List<Loan> loans = new ArrayList<>(); //private encapsulation
 
     public void addBook(Book book) {
         books.add(book);
@@ -131,10 +131,10 @@ public class Library {
     public void removeBook(Book book) {
         books.remove(book);
     }
-
+    //Polymorphism: Polymorphism allows methods to perform different tasks based on the object that it is acting upon, even if they share the same name.
     public void borrowBook(User user, Book book) {
         if (book.checkAvailability()) {
-            book.reserveCopy();
+            book.markAsBorrowed();
             Loan loan = new Loan("L" + (loans.size() + 1), book, user, new Date(), new Date(System.currentTimeMillis() + (14 * 24 * 60 * 60 * 1000))); // 2 weeks
             loans.add(loan);
             System.out.println(user.getName() + " borrowed book " + book.getTitle());
@@ -144,9 +144,13 @@ public class Library {
     }
 
     public void returnBook(Loan loan) {
-        loan.book.returnCopy();
+        loan.book.markAsReturn();
         loans.remove(loan);
-        System.out.println(loan.user.getName() + " returned  book" + loan.book.getTitle());
+        System.out.println(loan.user.getName() + " returned book " + loan.book.getTitle());
+    }
+
+    public List<Loan> getLoans() { // Added accessor method for loans
+        return loans;
     }
 }
 
@@ -158,15 +162,16 @@ public class LibraryManagementSystem {
         Member member = new Member("Sox", "Sox@example.com");
 
         // Librarian adds a book
-        Book book1 = new Book("To kill a morking bird", "Harper Lee", "123456789", 3);
+        Book book1 = new Book("To Kill a Mockingbird", "Harper Lee", "123456789", 3); // Changed book title
         librarian.addBook(library, book1);
 
         // Member borrows a book
         library.borrowBook(member, book1);
 
         // Returning the book
-        
-        Loan lastLoan = library.loans.get(library.loans.size() - 1);
+        Loan lastLoan = library.getLoans().get(library.getLoans().size() - 1); // Use the accessor method
         library.returnBook(lastLoan);
     }
 }
+
+
